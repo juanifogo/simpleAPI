@@ -15,7 +15,7 @@ app.get('/data', (req,res)=>{
     connection.query('SELECT * FROM transporte', function (err, rows, fields) {
         if (err) throw err
     
-        res.send(rows)
+        res.status(200).send(rows)
     })
 })
 
