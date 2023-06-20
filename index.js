@@ -50,6 +50,10 @@ app.post('/data/:tag', (req, res)=>{
     })
 })
 
+app.use((req, res)=>{
+    res.status(404).send({mensaje: 'No se encontro la ruta'})
+})
+
 app.listen(port, ()=>{
     console.log(`App listening on port ${port}`)
 })
