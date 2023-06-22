@@ -3,7 +3,7 @@ const express = require('express')
 const app = express()
 const mysql = require('mysql2')
 
-const port = 41230
+const port = 3000
 const chkUndef = (element)=> typeof(element) === 'undefined'
 const connection = mysql.createConnection(process.env.DATABASE_URL);
 
@@ -54,6 +54,8 @@ app.use((req, res)=>{
     res.status(404).send({mensaje: 'No se encontro la ruta'})
 })
 
+
+module.exports = app
 app.listen(port, ()=>{
     console.log(`App listening on port ${port}`)
 })
