@@ -11,7 +11,12 @@ connection.connect()
 
 app.use(express.json())
 
-app.get('/api/data', (req,res)=>{
+app.get('/', (req, res)=>{
+    res.send('Bienvenido a la API')
+})
+
+    
+app.get('/data', (req,res)=>{
     connection.query('SELECT * FROM transporte', function (err, rows, fields) {
         if (err) throw err
     
@@ -56,6 +61,6 @@ app.use((req, res)=>{
 
 
 module.exports = app
-app.listen(port, ()=>{
-    console.log(`App listening on port ${port}`)
-})
+// app.listen(port, ()=>{
+//     console.log(`App listening on port ${port}`)
+// })
