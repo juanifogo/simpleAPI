@@ -3,7 +3,6 @@ const express = require('express')
 const app = express()
 const mysql = require('mysql2')
 
-const port = 3000
 const chkUndef = (element)=> typeof(element) === 'undefined'
 const connection = mysql.createConnection(process.env.DATABASE_URL);
 
@@ -14,7 +13,6 @@ app.use(express.json())
 app.get('/', (req, res)=>{
     res.send('Bienvenido a la API')
 })
-
     
 app.get('/data', (req,res)=>{
     connection.query('SELECT * FROM transporte', function (err, rows, fields) {
@@ -58,6 +56,5 @@ app.post('/data/:tag', (req, res)=>{
 app.use((req, res)=>{
     res.status(404).send({mensaje: 'No se encontro la ruta'})
 })
-
 
 module.exports = app
