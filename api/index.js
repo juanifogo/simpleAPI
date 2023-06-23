@@ -11,12 +11,12 @@ connection.connect()
 
 app.use(express.json())
 
-app.get('/api/', (req, res)=>{
+app.get('/', (req, res)=>{
     res.send('Bienvenido a la API')
 })
 
     
-app.get('/api/data', (req,res)=>{
+app.get('/data', (req,res)=>{
     connection.query('SELECT * FROM transporte', function (err, rows, fields) {
         if (err) throw err
     
@@ -24,7 +24,7 @@ app.get('/api/data', (req,res)=>{
     })
 })
 
-app.post('/api/data/:tag', (req, res)=>{
+app.post('/data/:tag', (req, res)=>{
     const {tag} = req.params
     const {humedad, temperatura, x_pos, y_pos} = req.body
     let sql = `SELECT * FROM transporte WHERE tag='${tag}'`
