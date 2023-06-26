@@ -2,12 +2,14 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const mysql = require('mysql2')
+const cors = require('cors')
 
 const chkUndef = (element)=> typeof(element) === 'undefined'
 const connection = mysql.createConnection(process.env.DATABASE_URL);
 
 connection.connect()
 
+app.use(cors())
 app.use(express.json())
 
 app.get('/', (req, res)=>{
@@ -24,7 +26,7 @@ app.get('/data', (req,res)=>{
 
 app.post('/data/:tag', (req, res)=>{
     const {tag} = req.params
-    const {humedad, temperatura, x_pos, y_pos} = req.body
+    const {humedad, temperatura, 'x-pos': x_pos, 'y-pos': y_pos} = req.body
     let sql = `SELECT * FROM transporte WHERE tag='${tag}'`
     let id;
     connection.query(sql, (err, rows, fields)=>{
