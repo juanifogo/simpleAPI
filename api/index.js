@@ -2,13 +2,14 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const mysql = require('mysql2')
+const cors = require('cors')
 
-const port = 3000
 const chkUndef = (element)=> typeof(element) === 'undefined'
 const connection = mysql.createConnection(process.env.DATABASE_URL);
 
 connection.connect()
 
+app.use(cors())
 app.use(express.json())
 
 app.get('/', (req, res)=>{
