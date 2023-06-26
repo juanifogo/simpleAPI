@@ -27,7 +27,7 @@ app.get('/data', (req,res)=>{
 
 app.post('/data/:tag', (req, res)=>{
     const {tag} = req.params
-    const {humedad, temperatura, x_pos, y_pos} = req.body
+    const {humedad, temperatura, 'x-pos': x_pos, 'y-pos': y_pos} = req.body
     let sql = `SELECT * FROM transporte WHERE tag='${tag}'`
     let id;
     connection.query(sql, (err, rows, fields)=>{
