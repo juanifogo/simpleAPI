@@ -15,7 +15,9 @@ app.use(express.json())
 app.get('/', (req, res) => {
     res.send('Bienvenido a la API')
 })
-    
+app.post('/prueba', (req, res)=>{
+    res.send("Hola")
+})    
 app.get('/data', async function(req,res) {
     let rows = await connection.query('SELECT * FROM transporte')
     res.status(200).send(rows[0])
