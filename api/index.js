@@ -5,7 +5,7 @@ const mysql = require('mysql2')
 const cors = require('cors')
 
 const chkUndef = (element) => typeof(element) === 'undefined'
-const connection = mysql.createConnection(process.env.DATABASE_URL);
+const connection = mysql.createConnection(process.env.DATABASE_URL).promise();
 
 connection.connect()
 
@@ -16,11 +16,9 @@ app.get('/', (req, res) => {
     res.send('Bienvenido a la API')
 })
     
-app.get('/data', (req,res) => {
-    connection.query('SELECT * FROM transporte', (err, rows, fields) => {
-        if (err) throw err    
-        res.status(200).send(rows)
-    })
+app.get('/data', async function(req,res) {
+    let rows = await connection.query('SELECT * FROM transporte')
+    res.status(200).send(rows[0])
 })
 
 app.post('/data/:tag', (req, res) => {
