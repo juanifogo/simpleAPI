@@ -113,6 +113,7 @@
         res.status(404).send({mensaje: 'No se encontro la ruta'})
     })
 
-    module.exports = app
-
+    app.listen(3000,()=>{
+        console.log("running")
+    })
 })();
