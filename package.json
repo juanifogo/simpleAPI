@@ -1,4 +1,14 @@
 {
+  "name": "simpleapi",
+  "description": "A simple REST API to get started with Node.js",
+  "version": "1.0.0",
+  "main": "./api/index.js",
+  "private": false,
+  "scripts": {
+    "dev": "nodemon ./api/index.js"
+  },
+  "author": "JuaniFogo",
+  "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",
@@ -7,7 +17,8 @@
     "nodemon": "^2.0.22",
     "vercel": "^30.2.3"
   },
-  "devDependencies": {
-    "nodemon": "^2.0.22"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juanifogo/simpleAPI.git"
   }
 }
