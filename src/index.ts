@@ -1,11 +1,11 @@
-require('dotenv').config()
-const express = require('express')
-const app = express()
-const mysql = require('mysql2')
-const cors = require('cors')
+import { PrismaClient } from '@prisma/client'
+import express from 'express'
 
-const chkUndef = (element) => typeof(element) === 'undefined'
-const connection = mysql.createConnection(process.env.DATABASE_URL).promise();
+const cors = require('cors')
+const prisma = new PrismaClient()
+const app = express()
+
+const chkUndef = (element: any) => typeof(element) === 'undefined'
 
 app.use(cors())
 app.use(express.json())
@@ -16,12 +16,13 @@ app.get('/', (req, res) => {
     
 app.get('/data', async function(req,res) {
     try{
-        const rows = await connection.query('SELECT * FROM transporte')
+        const result = await prisma.transporte.findMany()
         let output = "GET a /data"
         console.log(output)
-        res.status(200).send(rows[0])
+        return res.status(200).send(result)
     }
     catch(err){
+        res.status(500).send({mensaje: 'Error del servidor'})
         throw err
     }
 })
@@ -36,34 +37,44 @@ app.post('/data/:tag', async function(req, res) {
         return res.status(400).send({mensaje: output})
     }
 
-    let sql = `SELECT * FROM transporte WHERE tag='${tag}'`
-    let id
+    let id: number
 
     try{
-        const rows = await connection.query(sql)
-        if(rows[0].length == 0){
+        const result = await prisma.transporte.findFirst({
+            where: {
+                tag: tag
+            }
+        })
+        if(!result){
             let output = 'No se encontro una columna con el tag correspondiente'
             console.log(output)
             if(res.headersSent) return
             return res.status(400).send({mensaje: output})
         }
-        if(rows[0].length != 1) throw new error
-        id = rows[0][0].id
+        id = result.id
     }
     
     catch(err){
+        res.status(500).send({mensaje: 'Error del servidor'})
         throw err
     }
     
-    sql = `UPDATE transporte
-        SET humedad=${humedad}, temperatura=${temperatura}, \`x-pos\`=${x_pos}, \`y-pos\`=${y_pos}
-        WHERE tag='${tag}'`
     try{    
-        const rows = await connection.query(sql)
+        await prisma.transporte.updateMany({
+            where: {
+                tag: tag
+            },
+            data: {
+                humedad: humedad,
+                temperatura: temperatura,
+                x_pos: x_pos,
+                y_pos: y_pos
+            }
+        })
         let output = `Humedad: ${humedad}%, temperatura: ${temperatura}°C, X:${x_pos} Y: ${y_pos}, ID: ${id}`
         console.log(output)
         if(res.headersSent) return
-        res.status(200).send({mensaje: output})
+        return res.status(200).send({mensaje: output})
     }
     catch(err){
         throw err
@@ -79,10 +90,13 @@ app.post('/data', async function(req, res) {
         return res.status(400).send({mensaje: output})
     }
 
-    let sql = `SELECT * FROM transporte WHERE tag='${tag}';`
     try{
-        const rows = await connection.query(sql) 
-        if(!(rows[0].length == 0)){
+        const result = await prisma.transporte.findMany({
+            where: {
+                tag: tag
+            }
+        }) 
+        if(result.length > 0){
             let output = 'Ya existe una columna con el tag correspondiente'
             console.log(output)
             if(res.headersSent) return
@@ -90,26 +104,34 @@ app.post('/data', async function(req, res) {
         }
     }
     catch(err){
+        res.status(500).send({mensaje: 'Error del servidor'})
         throw err
     }
     
-    sql = `INSERT INTO transporte (humedad, temperatura, \`x-pos\`, \`y-pos\`, tag)
-        VALUES (${humedad}, ${temperatura}, ${x_pos}, ${y_pos}, '${tag}');`
-
     try{
-        const rows = await connection.query(sql)
-        const id = rows[0].insertId
+        const result = await prisma.transporte.create({
+            data: {
+                humedad: humedad,
+                temperatura: temperatura,
+                x_pos: x_pos,
+                y_pos: y_pos,
+                tag: tag
+            }
+        })
+        const id = result.id
         let output = `Recurso creado con ID: ${id}, tag: ${tag}`
         console.log(output)
         if(res.headersSent) return
-        res.status(200).send({mensaje: output})
+        return res.status(200).send({mensaje: output})
     }
     catch(err){
+        res.status(500).send({mensaje: 'Error del servidor'})
         throw err
     }    
 })
+
 app.use((req, res) => {
     res.status(404).send({mensaje: 'No se encontro la ruta'})
 })
 
-module.exports = app
+export default app
